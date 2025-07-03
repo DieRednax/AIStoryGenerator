@@ -51,6 +51,7 @@ public class AIClient {
         GPT_3_5_TURBO("gpt-3.5-turbo"),
         GPT_4o_MINI("gpt-4o-mini"),
         GPT_4_1_MINI("gpt-4.1-mini"),
+        GPT_4_1_NANO("gpt-4.1-nano"),
         /**
          * CLAUDE
          */
@@ -62,7 +63,7 @@ public class AIClient {
         /**
          * GEMINI
          */
-        GEMINI_2_5_PRO("gemini-2.5-pro"),
+        GEMINI_2_5_PRO("gemini-2.5-pro"), //costs money
         GEMINI_2_5_FLASH("gemini-2.5-flash"),
         GEMINI_2_5_FLASH_LITE_PREV("gemini-2.5-flash-lite-preview-06-17"),
         GEMINI_2_0_FLASH("gemini-2.0-flash"),
@@ -179,5 +180,16 @@ public class AIClient {
                 .getAsJsonObject("message")
                 .get("content")
                 .getAsString();
+    }
+
+    public static String extractGeminiContent(String json) {
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        return jsonObject
+                .getAsJsonArray("candidates")
+                .get(0).getAsJsonObject()
+                .getAsJsonObject("content")
+                .getAsJsonArray("parts")
+                .get(0).getAsJsonObject()
+                .get("text").getAsString();
     }
 }

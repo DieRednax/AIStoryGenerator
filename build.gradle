@@ -23,5 +23,16 @@ test {
 }
 
 application {
-    mainClassName = 'com.redfox.ai_story_generator.AIStoryGenerator'
+    mainClassName = 'com.redfox.ai_story_generator.AIStoryGeneratorEdu'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.redfox.ai_story_generator.AIStoryGeneratorEdu"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

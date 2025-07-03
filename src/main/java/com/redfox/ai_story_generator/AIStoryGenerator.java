@@ -2,7 +2,6 @@ package com.redfox.ai_story_generator;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class AIStoryGenerator {
-    public static void main(String[] args) {
+    public static void prevMain(String[] args) {
         if (args.length != 2) { System.out.println("2 input parameters are required"); return; }
 
         Scanner scanner = new Scanner(System.in);
@@ -85,7 +84,7 @@ public class AIStoryGenerator {
         if (hasTitle) { titleSentence = ". Sit 'n titel aan die bokant"; } else titleSentence = "";
 
         String middleSentence;
-        if ((!wordClause.isEmpty()) || (!ageAchievementClause.isEmpty()) || (!topicClause.isEmpty()))  {
+        if ((!wordClause.isEmpty()) || (!ageAchievementClause.isEmpty()) || (!topicClause.isEmpty()) || (!titleSentence.isEmpty()))  {
             middleSentence = " Dit moet " + wordClause
                     + ageAchievementClause
                     + topicClause
@@ -129,7 +128,7 @@ public class AIStoryGenerator {
                 } else now = now.withMinute(mins).withSecond(0).withNano(0);
                 String time = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm"));
 
-                Path genPath = Paths.get("generated_stories/" + time + "/" + prompt + "_" + generatedStories.indexOf(generatedStory) + ".txt");
+                Path genPath = Paths.get("generated_stories_" + aiModel.toString().toLowerCase() + "/" + time + "/" + prompt + "_" + generatedStories.indexOf(generatedStory) + ".txt");
                 if (Files.notExists(genPath.getParent())) {
                     Files.createDirectories(genPath.getParent());
                 }
@@ -181,12 +180,12 @@ public class AIStoryGenerator {
   "system_fingerprint": "fp_34a54ae93c"
 }*/
     }
-    private static String generateStory(String prompt, String apiKey, AIClient.AIModel aiModel, AIClient.AIVersion aiVersion) {
+    static String generateStory(String prompt, String apiKey, AIClient.AIModel aiModel, AIClient.AIVersion aiVersion) {
         try {
             String response = switch (aiModel) {
                 case CHAT_GPT -> AIClient.extractChatGPTContent(AIClient.askAI(prompt, apiKey, aiModel, aiVersion));
                 case CLAUDE -> null;
-                case GEMINI -> null;
+                case GEMINI -> AIClient.extractGeminiContent(AIClient.askAI(prompt, apiKey, aiModel, aiVersion));
             };
             return response;
         } catch (Exception e) {
